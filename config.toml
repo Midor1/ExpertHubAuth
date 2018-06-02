@@ -1,0 +1,6 @@
+[Database]
+MySQLString = "root:root@/ExpertHubAuth"
+RedisAddress = "localhost:6379"
+
+[Server]
+Port = ":811"
