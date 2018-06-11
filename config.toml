@@ -4,3 +4,8 @@ RedisAddress = "localhost:6379"
 
 [Server]
 Port = ":811"
+
+[User]
+EmailAddress = "ExpertHubAuth@gmail.com"
+EmailPassword = "Expert.Hub"
+EmailHost = "smtp.gmail.com:25"

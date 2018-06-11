@@ -8,6 +8,7 @@ import (
 type Conf struct {
 	Database    DatabaseConf   `toml:"Database"`
 	Server      ServerConf     `toml:"Server"`
+	User        UserConf       `toml:"User"`
 }
 
 type DatabaseConf struct {
@@ -17,6 +18,12 @@ type DatabaseConf struct {
 
 type ServerConf struct {
 	Port   string   `toml:"Port"`
+}
+
+type UserConf struct {
+	EmailAddress  string   `toml:"EmailAddress"`
+	EmailPassword string   `toml:"EmailPassword"`
+	EmailHost     string   `toml:"EmailHost"`
 }
 
 func (c *Conf) GetConfig() (*Conf, error) {
