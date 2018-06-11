@@ -47,3 +47,27 @@ func UserLogout(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, string(ret))
 	fmt.Println(string(ret))
 }
+
+func UserRegister(w http.ResponseWriter, r *http.Request) {
+	PreprocessXHR(&w,r)
+	r.ParseMultipartForm(32 << 20)
+	nickname := r.MultipartForm.Value["nickname"][0]
+	password := r.MultipartForm.Value["hashkey"][0]
+	user := model.User{UserID: 0, UserName: nickname, Password: password}
+	res := model.Register(user)
+	info := OffRet{res}
+	ret, _ := json.Marshal(info)
+	fmt.Fprint(w, string(ret))
+	fmt.Println(string(ret))
+}
+
+func UserCheck(w http.ResponseWriter, r *http.Request) {
+	PreprocessXHR(&w,r)
+	r.ParseMultipartForm(32 << 20)
+	token := r.MultipartForm.Value["token"][0]
+	id := CheckSession(token)
+	info := OffRet{id}
+	ret, _ := json.Marshal(info)
+	fmt.Fprint(w, string(ret))
+	fmt.Println(string(ret))
+}

@@ -17,6 +17,8 @@ func main() {
 	rtr.HandleFunc("/hello", SayHello)
 	rtr.HandleFunc("/login",controller.UserLogin).Methods("POST")
 	rtr.HandleFunc("/logout",controller.UserLogout).Methods("POST")
+	rtr.HandleFunc("/check",controller.UserCheck).Methods("POST")
+	rtr.HandleFunc("/register",controller.UserRegister).Methods("POST")
 	http.Handle("/", rtr)
 	http.ListenAndServe(conf.Server.Port, nil)
 }
