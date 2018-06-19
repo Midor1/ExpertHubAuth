@@ -5,10 +5,10 @@ import (
 	"model"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 )
 
 type AuthRet struct {
-	Token    string  `json:"token"`
 	Status   int     `json:"status"`
 }
 
@@ -16,21 +16,29 @@ type OffRet struct {
 	Status   int     `json:"status"`
 }
 
+type UserReq struct {
+	UserName     string    `json:"nickname"`
+ 	Password     string    `json:"hashkey"`
+}
+
 func UserLogin(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	username := r.MultipartForm.Value["nickname"][0]
-	password := r.MultipartForm.Value["hashkey"][0]
-	user := model.User{UserID: 0, UserName: username, Password: password}
-	id := model.Login(user)
+	body, _ := ioutil.ReadAll(r.Body)
+	var user UserReq
+	_ = json.Unmarshal(body,&user)
+	fmt.Println(user.Password + " " + user.UserName)
+	userm := model.User{UserID: 0, UserName: user.UserName, Password: user.Password}
+	id := model.Login(userm)
 	if id == -1 {
-		info := AuthRet{"",-1}
+		info := AuthRet{-1}
 		ret, _ := json.Marshal(info)
 		fmt.Fprint(w, string(ret))
 		fmt.Println(string(ret))
 	} else {
 		token := NewSession(id)
-		info := AuthRet{token,0}
+		cookie := http.Cookie{Name:"token",Value:token}
+		http.SetCookie(w, &cookie)
+		info := AuthRet{0}
 		ret, _ := json.Marshal(info)
 		fmt.Fprint(w, string(ret))
 		fmt.Println(string(ret))
@@ -39,9 +47,11 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 func UserLogout(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	token := r.MultipartForm.Value["token"][0]
-	id := DropSession(token)
+	r.ParseForm()
+	token, _ := r.Cookie("token")
+	id := DropSession(token.Value)
+	cookie := http.Cookie{Name:"token",Value:""}
+	http.SetCookie(w, &cookie)
 	info := OffRet{id}
 	ret, _ := json.Marshal(info)
 	fmt.Fprint(w, string(ret))
@@ -50,11 +60,12 @@ func UserLogout(w http.ResponseWriter, r *http.Request) {
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	nickname := r.MultipartForm.Value["nickname"][0]
-	password := r.MultipartForm.Value["hashkey"][0]
-	user := model.User{UserID: 0, UserName: nickname, Password: password}
-	res := model.Register(user)
+	body, _ := ioutil.ReadAll(r.Body)
+	var user UserReq
+	_ = json.Unmarshal(body,&user)
+	fmt.Println(user.Password + user.UserName)
+	userm := model.User{UserID: 0, UserName: user.UserName, Password: user.Password}
+	res := model.Register(userm)
 	info := OffRet{res}
 	ret, _ := json.Marshal(info)
 	fmt.Fprint(w, string(ret))
@@ -63,9 +74,9 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 
 func UserCheck(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	token := r.MultipartForm.Value["token"][0]
-	id := CheckSession(token)
+	r.ParseForm()
+	token, _ := r.Cookie("token")
+	id := DropSession(token.Value)
 	info := OffRet{id}
 	ret, _ := json.Marshal(info)
 	fmt.Fprint(w, string(ret))

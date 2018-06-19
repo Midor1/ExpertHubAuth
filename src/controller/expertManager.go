@@ -10,19 +10,31 @@ import (
 	"time"
 	"strconv"
 	"sort"
+	"io/ioutil"
 )
 
 type MapRet struct {
 	EIDs    []int    `json:"eid"`
 }
 
+type ExpertRegReq struct {
+	UserName     string    `json:"nickname"`
+	Email        string    `json:"email"`
+}
+
+type EmailValReq struct {
+	Captcha     string    `json:"captcha"`
+}
+
 func ExpertRegister(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	token := r.MultipartForm.Value["token"][0]
-	email := r.MultipartForm.Value["email"][0]
-	nickname := r.MultipartForm.Value["nickname"][0]
-	uid := CheckSession(token)
+	body, _ := ioutil.ReadAll(r.Body)
+	token, _ := r.Cookie("token")
+	var ereg ExpertRegReq
+	_ = json.Unmarshal(body, &ereg)
+	email := ereg.Email
+	nickname := ereg.UserName
+	uid := CheckSession(token.Value)
 	if uid == -1 {
 		info := OffRet{-1}
 		ret, _ := json.Marshal(info)
@@ -44,11 +56,12 @@ func ExpertRegister(w http.ResponseWriter, r *http.Request) {
 
 func EmailValidate(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	token := r.MultipartForm.Value["token"][0]
-	captcha := r.MultipartForm.Value["captcha"][0]
-	uid := CheckSession(token)
-	eid := model.CheckCaptcha(captcha, uid)
+	body, _ := ioutil.ReadAll(r.Body)
+	token, _ := r.Cookie("token")
+	var ereg EmailValReq
+	_ = json.Unmarshal(body, &ereg)
+	uid := CheckSession(token.Value)
+	eid := model.CheckCaptcha(ereg.Captcha, uid)
 	info := OffRet{eid}
 	ret, _ := json.Marshal(info)
 	fmt.Fprint(w, string(ret))
@@ -127,9 +140,8 @@ func InfoCRUD(w http.ResponseWriter, r *http.Request) {
 
 func Mapping(w http.ResponseWriter, r *http.Request) {
 	PreprocessXHR(&w,r)
-	r.ParseMultipartForm(32 << 20)
-	token := r.MultipartForm.Value["token"][0]
-	id := CheckSession(token)
+	token, _ := r.Cookie("token")
+	id := CheckSession(token.Value)
 	eid := model.GetMapping(id)
 	info := MapRet{eid}
 	ret, _ := json.Marshal(info)

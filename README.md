@@ -26,12 +26,14 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 ## API文档
 
+#### 现在除了CRUD都已经改成了JSON。
+
 ### Login [/login]
 
 用户登录，返回0表示成功登录。hashkey之后可能会约定一种散列方式(SHA512)? 我也不是很懂233
 
-+ Request (multipart/form-data)
-     + Key-Value Pairs
++ Request (application/json)
+     + Attribute
          + nickname (string, required)
          + hashkey (string, required)
 
@@ -50,9 +52,7 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 注销，成功返回用户ID，失败返回-1。
 
-+ Request (multipart/form-data)
-   + Key-Value Pairs
-       + token (string, required)
++ Request (N/A)
 
 + Response 200 (application/json)
   + Attribute
@@ -67,8 +67,8 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 注册普通用户，返回用户的UID。
 
-+ Request (multipart/form-data)
-     + Key-Value Pairs
++ Request (application/json)
+     + Attribute
          + nickname (string, required)
          + hashkey (string, required)
 
@@ -85,9 +85,7 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 用token取得UID，不存在则返回-1。
 
-+ Request (multipart/form-data)
-   + Key-Value Pairs
-       + token (string, required)
++ Request (N/A)
 
 + Response 200 (application/json)
   + Attribute
@@ -104,10 +102,9 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 系统会向提供的邮箱内发送验证码，可以调用Validate的API验证，否则AccountStatus字段会始终为-1(停用)状态。
 
-+ Request (multipart/form-data)
-     + Key-Value Pairs
++ Request (application/json)
+     + Attribute
          + nickname (string, required)
-         + token (string, required)
          + email (string, required)
 
 + Response 200 (application/json)
@@ -123,10 +120,9 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 验证邮箱验证码，成功返回专家的ID(EID)，失败返回-1。
 
-+ Request (multipart/form-data)
-     + Key-Value Pairs
++ Request (application/json)
+     + Attribute
          + captcha (string, required)
-         + token (string, required)
 
 + Response 200 (application/json)
   + Attribute
@@ -141,9 +137,7 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
 
 从用户的token取得他登记的全部专家。
 
-+ Request (multipart/form-data)
-     + Key-Value Pairs
-         + token (string, required)
++ Request (N/A)
 
 + Response 200 (application/json)
   + Attribute
