@@ -30,6 +30,8 @@ func main() {
 	rtr.HandleFunc("/validate",controller.EmailValidate).Methods("POST")
 	rtr.HandleFunc("/map",controller.Mapping).Methods("POST")
 	rtr.HandleFunc("/crud",controller.InfoCRUD).Methods("POST")
+	rtr.HandleFunc("/credit",controller.GetCredit).Methods("GET")
+	rtr.HandleFunc("/credit",controller.ModifyCredit).Methods("POST")
 	rtr.HandleFunc("/{any}",Options).Methods("OPTIONS")
 	http.Handle("/", rtr)
 	http.ListenAndServe(conf.Server.Port, nil)

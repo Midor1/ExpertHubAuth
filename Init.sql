@@ -2,7 +2,7 @@ drop schema if exists ExpertHubAuth;
 create schema ExpertHubAuth;
 use ExpertHubAuth;
 
-create table users(userid bigint auto_increment key, nickname varchar(32) not null unique, hashkey text not null);
+create table users(userid bigint auto_increment key, nickname varchar(32) not null unique, hashkey text not null, credit int default 0);
 
 create table experts(
  expertid bigint auto_increment key,

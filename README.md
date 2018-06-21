@@ -191,3 +191,33 @@ Clone之后在工作目录下执行`sudo nohup ./experthubauth &`，也可以使
         {
             "status": 0
         }      
+
+### Credits [/credit]
+
+#### Get Credit [GET]
+
++ Response 200 (application/json)
+  + Attribute
+      + status       (int)
+  + Body
+   
+        {
+            "status": 4
+        }
+        
+#### Modify Credit [POST]
+
+在现有积分上增减给出的数值。
+
++ Request (application/json)
+     + Attribute
+         + credit (int, required)
+
++ Response 200 (application/json)
+  + Attribute
+      + status       (int)
+  + Body
+   
+        {
+            "status": 4
+        }        

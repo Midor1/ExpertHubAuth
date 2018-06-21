@@ -8,4 +8,4 @@ Port = ":811"
 [User]
 EmailAddress = "ExpertHubAuth@gmail.com"
 EmailPassword = "Expert.Hub"
-EmailHost = "smtp.gmail.com:25"
+EmailHost = "smtp.gmail.com:587"
